@@ -1,13 +1,13 @@
 #!/usr/bin/perl
 package SQL::Builder;
 
-$VERSION = "0.01";
+$VERSION = "0.02";
 
 #use 5.008005;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use SQL::Builder::Table;
 use SQL::Builder::Select;

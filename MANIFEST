@@ -30,6 +30,7 @@ t/AggregateFunction.t
 t/ColumnList.t
 t/FromList.t
 t/FromTable.t
+t/Select.t
 lib/SQL/Builder.pm
 lib/SQL/Builder/Base.pm
 lib/SQL/Builder/BaseProxy.pm
@@ -65,5 +66,6 @@ lib/SQL/Builder/Iterator.pm
 lib/SQL/Builder/ColumnList.pm
 lib/SQL/Builder/FromList.pm
 lib/SQL/Builder/FromTable.pm
+lib/SQL/Builder/Select.pm
 META.yml                                 Module meta-data (added by MakeMaker)
 BUGS

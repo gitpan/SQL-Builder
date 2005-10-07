@@ -1,5 +1,8 @@
 Revision history for Perl extension SQL::Builder.
 
+0.02  Fri Oct  7 10:20:00 2005
+	- Forgot to add Select.pm to the MANIFEST, added
+
 0.01  Fri Jun 17 19:10:41 2005
 	- original version; created by h2xs 1.23 with options
 		-AX -n SQL::Builder
