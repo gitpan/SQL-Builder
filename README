@@ -1,0 +1,28 @@
+SQL-Builder version 0.01
+========================
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+Perl 5.6, Data::Dumper, Carp, Exporter
+
+USAGE
+
+perldoc SQL::Builder or perldoc SQL::Builder::WhateverModule
+
+COPYRIGHT AND LICENCE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself
+
+CONTACT
+
+sili@cpan.org, freenode/#perl
