@@ -1,5 +1,22 @@
 Revision history for Perl extension SQL::Builder.
 
+0.03  Wed Nov  2 20:00:00 2005
+	- Added make_instance() factory to Base.pm
+	- Added a test for make_instance() to Function.t
+	- Removed Alias*.pm and Alias.t. Not being used and poorly done
+	- Added documentation all over
+	- Added better quoting support to Column.pm - now includes check for
+	   dbh() and falls back to quoter(), allows control of quoting mechanisms using
+	   various options. Also changed other() to use SQL::Builder::List instead of
+	   a Perl array. Added more tests
+	- Modified Base.pm macro api to include mark_parents
+	- Added placeholders
+	- Extracted part of API from Base to AnyObject
+	- Added children() method and documentation everywhere possible
+	- Added better quoting support to Table.pm
+	- Added tests for Select among otherss
+	- Added alias_sql() to Base.pm
+
 0.02  Fri Oct  7 10:20:00 2005
 	- Forgot to add Select.pm to the MANIFEST, added
 

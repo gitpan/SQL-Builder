@@ -1,5 +1,9 @@
-SQL-Builder version 0.02
+SQL-Builder version 0.03
 ========================
+
+SQL::Builder is a set of modules which can be used
+to statefully represent a SQL query in order to reuse it
+efficiently and modify it easily
 
 INSTALLATION
 
@@ -12,7 +16,7 @@ To install this module type the following:
 
 DEPENDENCIES
 
-Perl 5.6, Data::Dumper, Carp, Exporter
+Perl 5.6, Data::Dumper, Carp, Exporter, Scalar::Util
 
 USAGE
 
@@ -26,3 +30,5 @@ it under the same terms as Perl itself
 CONTACT
 
 sili@cpan.org, freenode/#perl
+
+Some development is temporarily being done on the DBIx::Class mailing lists

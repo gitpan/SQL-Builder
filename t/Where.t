@@ -1,11 +1,13 @@
-use Test::More tests => 6;
+use Test::More tests => 5;
+use strict;
+use warnings;
 
 #does it load
 BEGIN { use_ok('SQL::Builder::Where') };
 
 my $w = SQL::Builder::Where->new();
 
-$w->set(qw(foo bar));
+$w->set(list => [qw(foo bar)]);
 
 is($w->sql, 'WHERE foo AND bar', "basics work");
 
@@ -17,10 +19,6 @@ $w->and('moo');
 
 is($w->sql, "WHERE foo AND bar AND crapola AND moo", "and works");
 
-$w->set([]);
+$w->list_clear();
 
 is($w->sql, "", "empty works");
-
-$w = $w->quick({foo => 1}, {bar => 2});
-
-is($w->sql, "WHERE (foo = 1) AND (bar = 2)", "quick");

@@ -1,4 +1,6 @@
 use Test::More tests => 12;
+use strict;
+use warnings;
 BEGIN { use_ok('SQL::Builder::List') };
 
 #empty object creation
@@ -13,7 +15,7 @@ else	{
 
 
 #storage test. will test set() and list()
-$l->set([qw(foo bar baz)]);
+$l->set(list => [qw(foo bar baz)]);
 #use Data::Dumper; die Dumper $l->list;
 ok(@{$l->list()} == 3, "storage/retrieval works");
 
@@ -41,7 +43,7 @@ $l->list_unshift("dooky");
 ok($l->sql eq "(dooky, bar, baz)", "unshift works");
 
 
-$l->list([qw(foo)]);
+$l->list(qw(foo));
 is($l->sql, "(foo)", "set with aref");
 
 $l->list(qw(foo bar));

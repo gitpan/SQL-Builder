@@ -6,9 +6,11 @@ WriteMakefile(
     NAME              => 'SQL::Builder',
     VERSION_FROM      => 'lib/SQL/Builder.pm', # finds $VERSION
     PREREQ_PM         => {
-			    'Clone' => 0.18
-    			}, # e.g., Module::Name => 1.1
+    	    			'Data::Dumper' => 2.121,
+			    'Scalar::Util' => 1.14
+			    #'Clone' => 0.18,
+    			},
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/SQL/Builder.pm', # retrieve abstract from module
-       AUTHOR         => 'User & <sili@freebsd.org>') : ()),
+       AUTHOR         => 'sebastian <sili@cpan.org>') : ()),
 );

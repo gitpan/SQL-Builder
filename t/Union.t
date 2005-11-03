@@ -1,4 +1,6 @@
 use Test::More tests => 4;
+use strict;
+use warnings;
 BEGIN { use_ok('SQL::Builder::Union') };
 
 my $u = SQL::Builder::Union->new();

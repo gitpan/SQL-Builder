@@ -10,18 +10,6 @@ use SQL::Builder::Base;
 
 use base qw(SQL::Builder::Base);
 
-#sets LIMIT/OFFSET
-sub set	{
-	my $self  = shift;
-	my $limit = shift;
-
-	$self->limit($limit);
-
-	if(@_)	{
-		$self->offset(shift)
-	}
-}
-
 sub limit	{
 	return shift->_set(limit => @_)
 }
@@ -33,47 +21,79 @@ sub offset	{
 sub sql	{
 	my $self = shift;
 
-	my $limit = $self->limit;
+	my $limit = $self->dosql($self->limit);
 	
-	return "" unless defined $limit;
+	my $offset = $self->dosql($self->offset);
 
-	my $offset = $self->offset;
+	my $sql = ''; 
+	
+	$sql = "LIMIT $limit" if defined($limit) && length $limit;
 
-	my $sql = "LIMIT $limit";
-
-	$sql .= " OFFSET $offset" if defined $offset;
+	$sql .= " OFFSET $offset" if defined($offset) && length $offset;
 
 	return $sql;
 }
 
-sub quick	{
-	my $class = shift;
-	
-	if(ref $_[0] eq 'HASH')	{
-		my $info = shift;
-		my @args;
+sub children	{
+	my $self = shift;
 
-		if(defined $$info{limit})	{
-			push @args, $$info{limit};
-
-			if(defined $$info{offset})	{
-				push @args, $$info{offset}
-			}
-		}
-		
-		if(@args)	{
-			return $class->new(@args)
-		}
-		else	{
-			confess "Expecting at least offset, empty hash passed"
-		}
-	}
-	elsif(@_)	{
-		return $class->new(@_)
-	}
-	else	{
-		confess "Expecting at least one argument"
-	}
+	return $self->_make_children_iterator([
+		$self->limit, $self->offset
+	])
 }
 
 1;
+
+=head1 NAME
+
+SQL::Builder::Limit - Represent LIMIT/OFFSET clauses
+
+=head1 SYNOPSIS
+
+	my $lim = SQL::Builder::Limit->new(
+		limit => 10,
+		offset=> 10
+	);
+
+	# LIMIT 10 OFFSET 10
+	print $lim->sql
+
+	$lim->offset(undef);
+
+	# LIMIT 10
+	print $lim->sql
+
+=head1 METHODS
+
+=head2 limit([$lim])
+
+Get/set the LIMIT value. When arguments are passed, the value is set and current
+object is returned; returns the current value otherwise. undef by default
+
+=head2 offset([$offset])
+
+Get/set the OFFSET value. When arguments are passed, the value iss et and the
+current object is returned; returns the current value otherwise. undef by
+default
+
+=head2 sql()
+
+Returns the SQL serialization. limit() and offset() are passed through
+SQL::Builder::Base::dosql() before being processed. If $limit is defined and has
+a length, it is used. If $offset is defined and has a length, it is used. If
+neither $limit or $offset can be used, an empty string is returned. One could
+end up with any of the following, including the empty string
+
+	LIMIT x OFFSET y
+	LIMIT x
+	OFFSET y
+
+=head2 children()
+
+Return a SQL::Builder::Iterator to iterate over the values of limit() and
+offset()
+
+=head1 SEE ALSO
+
+SQL::Builder::Base(3)
+SQL::Builder(3)

@@ -1,21 +1,28 @@
-use Test::More tests => 13;
+use Test::More tests => 10;
+use strict;
+use warnings;
 
 BEGIN { use_ok('SQL::Builder::Column') };
+BEGIN { use_ok('SQL::Builder::Table') };
 
-my $c = SQL::Builder::Column->new("col", "alias", "table", "schema");
+my $c = SQL::Builder::Column->new(
+	col => 'col',
+	alias => 'alias',
+	'other->list_push' => [qw(table schema)]
+);
 
 ok($c, "object created");
 
 is($c->col, "col", "col storage works");
 
-is(scalar(@{$c->other}), 2, "other storage works");
+is(scalar(@{$c->other->list}), 2, "other storage works");
 
-is($c->sql, "schema.table.col", "sql works");
+is($c->full_name, "schema.table.col", "sql works");
 
-$c->quoter( sub {return "`$_[0]`"});
-$c->options(quote => 1);
+$c->quoter( sub {return "'$_[1]'"});
+$c->quote(1);
 
-is($c->sql, "`schema.table.col`", "quoter option works");
+is($c->full_name, "'schema'.'table'.'col'", "quoter option");
 
 $c->quoter(undef);
 
@@ -30,22 +37,15 @@ $c->col("foo");
 $c->alias("bar");
 
 
-## test expression handling
+{
+	my $users   = SQL::Builder::Table->new(name => "users", alias => "u");
 
-my @list = SQL::Builder::Column->quick(
-	['refcol', 'alias', "table"],
-	$c,
-	"scalarcol",
-	{
-		col => "col",
-		other => "table",
-		alias => "bar"
-	}
-);
+	my $user_id = SQL::Builder::Column->new(
+			name => "user_id",
+			other => $users
+		);
 
+	# u.user_id
+	is($user_id->sql, "u.user_id", "full_name uses other() when it has an alias");
 
-is($list[0]->sql, "table.refcol", "ref expr works");
-is($list[1]->sql, "schema.table.foo", 'obj expr works');
-is($list[2]->sql, "scalarcol", "string expr works");
-is($list[3]->sql, "table.col", "quick hash");
-is($list[3]->alias, "bar", "quick hash alias");
+}

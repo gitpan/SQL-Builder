@@ -1,4 +1,6 @@
-use Test::More tests => 5;
+use Test::More tests => 4;
+use strict;
+use warnings;
 
 BEGIN { use_ok('SQL::Builder::Having') };
 
@@ -15,9 +17,3 @@ $h = $h->new();
 $h->expr->list_push("COUNT(*) > 10");
 
 is($h->sql, "HAVING COUNT(*) > 10", "list push");
-
-$h = $h->quick(
-	"some BINARY operation"
-);
-
-is($h->sql, "HAVING some BINARY operation", "quick works");

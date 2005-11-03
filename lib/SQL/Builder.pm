@@ -1,17 +1,16 @@
 #!/usr/bin/perl
 package SQL::Builder;
 
-$VERSION = "0.02";
+$VERSION = "0.03";
 
 #use 5.008005;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use SQL::Builder::Table;
 use SQL::Builder::Select;
-use SQL::Builder::Any;
 use SQL::Builder::List;
 use SQL::Builder::OrderBy;
 use SQL::Builder::Join;
@@ -31,11 +30,9 @@ use SQL::Builder::Union;
 use SQL::Builder::Junction;
 use SQL::Builder::Intersect;
 use SQL::Builder::Except;
-use SQL::Builder::Alias;
 
 sub qtable	{ return SQL::Builder::Table->new(@_) }
 sub qselect	{ return SQL::Builder::Select->new(@_) }
-sub qany	{ return SQL::Builder::Any->new(@_) }
 sub qlist	{ return SQL::Builder::List->new(@_) }
 sub qorderby	{ return SQL::Builder::OrderBy->new(@_) }
 sub qjoin	{ return SQL::Builder::Join->new(@_) }
@@ -54,7 +51,6 @@ sub qdistinct	{ return SQL::Builder::Distinct->new(@_) }
 sub qunion	{ return SQL::Builder::Union->new(@_) }
 sub qintersect	{ return SQL::Builder::Intersect->new(@_) }
 sub qexcept	{ return SQL::Builder::Except->new(@_) }
-sub qalias	{ return SQL::Builder::Alias->new(@_) }
 
 sub EQ		{ return qop("=", @_) }
 sub AND		{ return qop("AND", @_) }
@@ -72,55 +68,181 @@ SQL::Builder - a structured SQL manipulation interface
 
 =head1 VERSION
 
-Version 0.01 ALPHA - this software isn't production-ready yet and the API is
-likely to change
+Version 0.03 ALPHA - this software isn't production-ready yet and the API is
+likely to change. Some methods and functionality aren't documented completely
+and some documentation exists without the functionality. USE AT YOUR OWN RISK
 
 =head1 SYNOPSIS
 
+THIS IS CURRENTLY UNSTABLE SOFTWARE. DO NOT USE IT IN PRODUCTION CODE; IT IS STILL
+UNDERGOING DEVELOPMENT. THE CURRENT TESTS COMPILE AND MOST FUNCTIONALITY SHOULD WORK,
+BUT I MAKE NO GUARANTEE
+
 SQL::Builder is a collection of modules sharing common interfaces for SQL
 manipulation with the goal of providing maximum reuse and scalability. It is
-not a SQL abstraction (although it does sort of abstract it out
-for you), but a structured interface for its manipulation. Because
+not specifically a SQL abstraction (although it does sort of abstract it out
+for you in some cases), but a structured interface for its manipulation. Because
 SQL::Builder is a stateful interface, one's SQL is as portable as they write it,
 with the possibility to traverse a SQL construct at runtime and, for example,
 convert instances of MySQL's OR operator ("||") with an appropriate "OR", or to
 replace the standard concatenation operator ("||"), to MySQL's "CONCAT".
 
-This module doesn't have any methods (yet). See SQL::Builder::*
+SQL::Builder's goal is not SQL portability, object-relation mapping, or
+abstraction. SQL::Builder would hopefully provide a solid foundation for all of
+these ideas.
 
-=head1 DESCRIPTION
+=head1 PROPAGANDA
 
-THIS IS CURRENTLY UNSTABLE SOFTWARE. DO NOT USE IT IN PRODUCTION CODE; IT IS STILL
-UNDERGOING DEVELOPMENT. THE CURRENT TESTS COMPILE AND MOST COULD SHOULD WORK,
-BUT ALL IS LACKING IN DOCUMENTATION
+I had spent a lot of time trying to gather my reasoning for developing
+SQL::Builder and why it's better than any current SQL abstraction/generation
+mechanism I've encountered, but it turns out that SQL::Builder is nothing
+special and the concepts on which it is based are not new. There are existing
+modules which have similar goals and have somewhat similar approaches, but I've
+found them to be a bit overwhelming for most needs. My
+reasoning/advocation for SQL::Builder bottom-lines reasoning for object-oriented
+programming: granularity, encapsulation, reuse, etc.
 
-This module may be "too much" or "unbenefitial" for certain applications. I work
-on data warehouses which provide interfaces for generating reports, and find the
-functionality provided by SQL::Builder to be quitessential. Given the dynamics
-of most applications I've written, I see little reason not to use SQL::Builder
-because I care about the maintainability of my query logic.
+SQL::Builder is a collection of granular objects that share a common base,
+which allow them to interact easily, consitently, and flexibly without the
+"overhead" (problems) created by certain abstraction/generation modules. I hope
+that at some point, ORMs, SQL abstractions, et. al. will
+utilize SQL::Builder as a base for their provided functionality. Building
+components with consistent and meaningful interfaces from the ground up is vital
+for any system that needs to work.
 
-One of my goals was to create structured interfaces for SQL constructs. I
-started with the most basic constructs, then started combining them to achieve
-necessary functionality for SQL statements such as SELECT. SQL::Builder::Select
-is a relatively small module; most of it's functionality has been contributed by
-underlying modules such as SQL::Builder::GroupBy, SQL::Builder::Join,
-SQL::Builder::ColumnList, etc. The benefit of the provided granularity should be
-obvious.
+I will outline some of the problems with existing SQL abstraction/generation
+mechanisms that are solved by SQL::Builder.
 
-All modules currently inherit from SQL::Builder::Base which provides many
-methods which makes creating new SQL constructs quick and easy. It also provides
-a common base for all constructs which makes subclassing them easy, too. I've found that
-most of my time has been spent creating convenience methods so that one can do
-more and type less. I tried to keep all database vendors in mind when developing
-small constructs, but avoided making any assumptions of how constructs can be
-used together; this hopefully will result in awesome portability.
+=head2 String Manipulation
 
-=head1 METHODS
+Building queries dynamically based on user data (or similar) is a nasty job and
+often results in difficult-to-debug, unmaintainable code. The need to manipulate
+strings based on a variety of criteria will clutter code and obfuscate it
+quickly.
 
-This module doesn't have any methods yet. See one of the modules below. This is
-only a summary and might not be 100% accurate, definitely see the module for
-complete documentation
+SQL phrasebooks/templates are the worst; they should be avoided like a plague.
+Their initial requirements usually appear basic, but user demands change, so the
+code changes. Joe Coder usually adds arguments to a function to control its
+return, essentially trying to harness the power of SQL in a single function.
+Then he does it again... and again. join(), map(), keys(), etc are applied
+liberally until the job is done. What's left is code like this:
+	
+	# taken from SQL::Abstract::select()
+
+	my $f = (ref $fields eq 'ARRAY') ? join ', ', map { $self->_quote($_) } @$fields : $fields;
+	my $sql = join ' ', $self->_sqlcase('select'), $f, $self->_sqlcase('from'), $table;
+
+and it's everywhere. Using functions and objects to hide the work will help
+with this process, but they must be granular to be effective on a large scale
+
+=head2 Basic Data Structures
+
+The smart programmers will often develop or use a library like DBIx::Abstract
+because it helps reduce the amount of string manipulation and allows SQL to
+built a little bit faster and cleaner. The typical interface (taken from
+DBIx::Abstract) usually looks something like:
+
+	select($fields,[$table,[$where[,$order]]])
+
+	select({fields=>$fields,table=>$table[,where=>$where][,order=>$order][,join=>$join][,group=>$group]})
+
+Basically we pass "vague data structures" which represent some piece of SQL.
+This is a start, but the effort is incomplete. In the process of building a
+query, the programmer is required to maintain the list of columns in a SELECT,
+the tables it JOINs, and the order in which results are displayed. The code is
+usually something like:
+
+	if(foo())	{
+
+		push @cols, "username"
+		push @joins, "users";
+
+		$users_was_joined = 1;
+	}
+
+	if(bar())	{
+		
+		if(!$users_was_joined)	{
+
+			push @joins, "users";
+		}
+
+		push @cols, "birthdate";
+		push @cols, "zipcode";
+	}
+
+	$dbh->select(\@cols, \@tables, \@joins ...
+
+The dirty job of string manipulation has mostly (note I said
+"mostly": at some point modules like DBIx::Abstract break and force one to write
+SQL - consider writing a query to SELECT MAX(...)) been cleaned up, but the
+messy job of maintaing state of our query is still there. Joe Coder needs to
+keep track of all his columns, joins, and WHERE clause manually until he can
+hand them off to select().
+
+The intelligent solution here would be to turn the arguments into object
+attributes and build intelligent methods around them. This can't all be in one
+class, though; it would hurt reusability and flexibility. Components need to be
+granular and stateful.
+
+=head2 Query Objects
+
+Once Joe Coder realizes that objects will solve many of his problems, he can't
+just code up an object to represent a SELECT statement, another for UPDATE, and
+yet another for DELETE. These operations/objects have way too much in common and
+require too much functionality to be sloppily placed in so few classes. SQL
+statements should be built from the ground up and given common interfaces where
+possible. The goal is to obtain perfect granularity so that larger objects can
+be composed as necessary without decreasing flexibility or repeating/copying (not
+reusing) code. Without common interfaces, these objects won't fit together
+easily.
+
+=head2 ORM / Object Modeling
+
+The ORM hype/buzz/movement is a movement in the right direction, but they (like the
+aforementioned) have serious problems. In a simple system, these ORMs do a good
+job abstracting SQL and building relationships, but at some point the complexity
+of relationships may forces a programmer to write SQL. This is especially
+problematic because these ORMs build SQL using one of the aforementioned broken
+implementations. Reusing logic in these ORMs is often difficult or
+impossible. If, at the point an ORM fails, one can easily utilize existing logic
+to inifnitely reuse and abstract it while maintaining state of it, a flexible and
+scalable system is possible.
+
+=head1 GETTING STARTED
+
+SQL::Builder is a relatively simple set of modules but the number of them may be
+overwhelming. Reading SQL::Builder::Select(3) then SQL::Builder::Base(3) should
+provide a nice overview over some of the internals and module usage. Once the
+overall picture is understood, it should be a little easier to see how the
+pieces fit together.
+
+While using these modules it's helpful to remember that they inherit from a
+common base and thrive on interface consistency. Here are a few key points to
+keep in mind:
+
+	* Get/set behavior is implemented with common functions. When arguments
+	  are passed, "set" behavior is assumed. This means that a value will be
+	  set (or stored), and for convenience the current object (think $self)
+	  is returned. This makes chaining calls easier:
+
+	  	$foo->bar(10)->baz(50)
+
+	  When called without arguments, the current value (of whatever) is
+	  returned
+
+	* sql() methods will filter all children (see SQL::Builder::Base(3))
+	  through SQL::Builder::Base::dosql()
+
+	* SQL::Builder doesn't much care for the validity of SQL. It doesn't
+	  care which database vendor is being used or what SQL constructs it
+	  supports. SQL::Buider will let the user mix and use components as
+	  necessary without placing restrictions; this means it's possible to
+	  generate SQL syntax errors
+
+	* No object should be referenced twice within the same tree
+
+=head1 SQL::Builder OBJECT SUMMARY
 
 =head2 SQL::Builder::Select(3)
 
@@ -129,10 +251,6 @@ complete documentation
 =head2 SQL::Builder::AggregateFunction(3)
 
 	 - Subclasses Function.pm, no methods implemented: FUNCTION(arg, arg)
-
-=head2 SQL::Builder::Any(3)
-
-	 - Used to represent anything, useful for subclassing
 
 =head2 SQL::Builder::Base(3)
 
@@ -248,6 +366,10 @@ complete documentation
 	 - Representation of prefix operators (like ++foo)
 	 - Produces: anything anything
 
+=head2 SQL::Builder::Placeholder(3)
+
+	- Intelligently apply placeholders to your SQL
+
 =head2 SQL::Builder::Select(3)
 
 	 - Almost everything in a SELECT statement
@@ -290,11 +412,7 @@ complete documentation
 
 =head1 TODO
 
-	- Placeholders**
-	- Fix circular references**
-	- More convenience methods
-	- Improved/more tests
-	- UPDATE, DELETE support
+	See the TODO file
 
 =head1 LICENSE
 
@@ -304,12 +422,28 @@ Perl Artistic
 
 sili@cpan.org -- Feel free to email me with questions, suggestions, etc
 
+=head1 CONTACT / GETTING INVOLVED
+
+sili@cpan.org
+
+feenode / #perl
+
+irc.perl.org / #dbix-class
+
+DBIx::Class mailing lists (temporarily)
+
+=head1 GETTING HELP
+
+See "CONTACT / GETTING INVOLVED"
+
+=head1 BUGS
+
+I'm sure there are plenty. See the BUGS file for known issues
+
 =head1 SEE ALSO
 
-perl(1)
 SQL::Builder::Select(3)
 SQL::Builder::AggregateFunction(3)
-SQL::Builder::Any(3)
 SQL::Builder::Base(3)
 SQL::Builder::BinaryOp(3)
 SQL::Builder::Column(3)
@@ -333,6 +467,7 @@ SQL::Builder::Order(3)
 SQL::Builder::OrderBy(3)
 SQL::Builder::PostfixOp(3)
 SQL::Builder::PrefixOp(3)
+SQL::Builder::Placeholder(3)
 SQL::Builder::Select(3)
 SQL::Builder::SubSelect(3)
 SQL::Builder::Table(3)
@@ -342,5 +477,5 @@ SQL::Builder::Union(3)
 SQL::Builder::Using(3)
 SQL::Builder::Where(3)
 
-=end
+=cut
 

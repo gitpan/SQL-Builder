@@ -1,4 +1,6 @@
 use Test::More tests => 4;
+use strict;
+use warnings;
 BEGIN { use_ok('SQL::Builder::Except') };
 
 my $u = SQL::Builder::Except->new();

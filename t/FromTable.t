@@ -1,4 +1,6 @@
 use Test::More tests => 12;
+use strict;
+use warnings;
 
 BEGIN { use_ok('SQL::Builder::FromTable') };
 BEGIN { use_ok('SQL::Builder::Table') };
@@ -11,22 +13,22 @@ BEGIN { use_ok('SQL::Builder::Table') };
 
 ## test with raw sql strings. some of these tests are done in FromList.t!!!
 {
-	my $from = SQL::Builder::FromTable->new("table1", "t1", qw(one two three));
+	my $from = SQL::Builder::FromTable->new(table => "table1", alias => "t1", 'col_container->list_push' => [qw(one two three)]);
 
 	is($from->sql, "table1 AS t1 (one, two, three)", "gen from strings");
 }
 
 ## test with raw sql strings. no alias, but cols
 {
-	my $from = SQL::Builder::FromTable->new("table1", undef, qw(one two three));
+	my $from = SQL::Builder::FromTable->new(table => "table1", 'col_container->list_push' => [qw(one two three)]);
 
 	is($from->sql, "table1 (one, two, three)", "gen from strings, no alias");
 }
 
 ## test using a table object with its own alias, with col aliases
 {
-	my $table = SQL::Builder::Table->new("table1", "t1", "schema");
-	my $from  = SQL::Builder::FromTable->new($table, undef, qw(one two three));
+	my $table = SQL::Builder::Table->new(table => "table1", alias => "t1", 'other->list_push' => "schema");
+	my $from  = SQL::Builder::FromTable->new(table => $table, 'col_container->list_push' => [qw(one two three)]);
 
 	is($from->sql, "schema.table1 AS t1 (one, two, three)", "table object with alias and alias cols");
 	
