@@ -57,9 +57,10 @@ sub sql	{
 
 	no warnings 'uninitialized';
 
+	my $func = $self->dosql($self->func);
+	my $args = $self->dosql($self->args);
+
 	if($self->auto_parens)	{
-		my $func = $self->dosql($self->func);
-		my $args = $self->dosql($self->args);
 
 		if($args)	{
 			return "$func($args)"
@@ -72,15 +73,15 @@ sub sql	{
 		if ($self->parens)	{
 
 			return sprintf "%s(%s)",
-				$self->dosql($self->func),
-				$self->dosql($self->args)
+				$func,
+				$args
 		}
 		else	{
-			my $tpl = exists $$self{args} ? "%s %s" : "%s";
+			my $tpl = defined($args) && length $args ? "%s %s" : "%s";
 
 			return sprintf $tpl,
-				$self->dosql($self->func),
-				$self->dosql($self->args)
+				$func,
+				$args
 		}
 	}
 }

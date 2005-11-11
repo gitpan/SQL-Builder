@@ -64,6 +64,13 @@ sub use_alias	{
 	return shift->options('use_alias', @_)
 }
 
+sub has_alias	{
+	my $self = shift;
+	my $alias = $self->alias;
+
+	return defined($alias) && length $alias
+}
+
 sub init	{
 	my $self = shift;
 
@@ -162,6 +169,39 @@ sub children	{
 		$self->name,
 		$self->alias
 	])
+}
+
+sub references_many	{
+	my $self = shift;
+
+	$self->references(shift);
+	$self->references_n("many");
+
+	return $self;
+}
+
+sub references_one	{
+	my $self = shift;
+
+	$self->references(shift);
+	$self->references_n("one");
+}
+
+sub references	{
+	return shift->_meta('references', @_)
+}
+
+# one|many
+sub references_n	{
+	return shift->_meta('references_n', @_)
+}
+
+sub is_primary	{
+	return shift->_meta('is_primary', @_)
+}
+
+sub data_type	{
+	return shift->_meta('data_type', @_);
 }
 
 1;
@@ -338,6 +378,53 @@ When turned on, this option affects the result of sql() and causes it to return
 the column alias if it is available. It is turned on (1) by default. When turned
 off, sql() will always return the value returned by full_name(). If use_alias()
 is called with no arguments, the current value is returned
+
+=head1 METHODS TO IGNORE
+
+The following methods are only used for some of my experimenting. Please ignore them
+completely.
+
+=head2 references([$obj])
+
+Useful for tracking information about whether or not this column is a foreign
+key, and determine where/what it references. Pass a value to set it and return
+the current object; don't pass any to return the current reference. See
+references_n() for keeping track of the sort of relationship. Typically the
+object passed here is a SQL::Builder::Column(3) object as it will help determine
+which column of which table is being referenced
+
+=head2 references_n([one|many])
+
+If this field is a foreign key, keep track of the relationship type. eg, "many
+to many", "one to many" etc. Pass "one" or "many" to set the relationship type
+and return the current object; don't pass any arguments to get the current
+value. See references(), references_one(), references_many()
+
+=head2 references_one($obj)
+
+=head2 references_many($obj)
+
+references_one() and references_many() are convenience method. The required
+argument that is passed is passed to references(), then references_n("one") or
+references_n("many") is called accordingly. The current object is always
+returned
+
+=head2 is_primary([1|0])
+
+Toggle whether or not this field is a primary key. Pass an argument to turn it
+on/off and return the current object, don't pass arguments to retrieve the
+current value.
+
+=head2 data_type([$type])
+
+Get/set the data type of the column. The value can be anything desired, it's left
+to the implementor to decide. Pass arguments to have the value set and current
+object returned; don't pass any to return the current value.
+
+=head2 has_alias()
+
+Returns true if alias() returns a value that is defined and has a length - basically
+specifiying that the column has an alias
 
 =head1 SEE ALSO
 

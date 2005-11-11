@@ -33,12 +33,41 @@ sub _set	{
 	
 	if(@_)	{
 		$$self{$key} = $_[0];
-		#$_[0]->parent($self) if $self->is_sb($_[0]) && $_[0]->id ne $self->id;
 		return $self
 	}
 
 	return $$self{$key}
 }
+
+
+sub _meta	{
+	my $self = shift;
+	my $key = shift;
+
+	$$self{meta} = {} unless $$self{meta};
+	
+	if(@_)	{
+		$$self{meta}{$key} = $_[0];
+		return $self
+	}
+
+	return $$self{meta}{$key}
+}
+
+sub _data	{
+	my $self = shift;
+	my $key = shift;
+
+	$$self{data} = {} unless $$self{meta};
+	
+	if(@_)	{
+		$$self{data}{$key} = $_[0];
+		return $self
+	}
+
+	return $$self{data}{$key}
+}
+
 
 
 # internal mechanism for object property unstorage
@@ -210,3 +239,16 @@ sub set	{
 sub init	{ }
 
 1;
+
+=head1 NAME
+
+SQL::Builder::AnyObject - useful set of methods for implementing classes around SQL::Builder
+
+=head1 SYNOPSIS
+
+See SQL::Builder::Base(3). Some of its documentation needs to be moved here
+
+=head1 SEE ALSO
+
+SQL::Builder::Base(3)
+SQL::Builder(3)

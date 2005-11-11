@@ -1,4 +1,4 @@
-use Test::More tests => 8;
+use Test::More tests => 10;
 use strict;
 use warnings;
 BEGIN { use_ok('SQL::Builder::Using') };
@@ -15,27 +15,34 @@ else	{
 
 
 #storage test. will test set() and list()
-$l->list(qw(foo bar baz));
+$l->expr->list(qw(foo bar baz));
 
 #use Data::Dumper; die Dumper $l->list;
-ok(@{$l->list()} == 3, "storage/retrieval works");
+ok(@{$l->expr->list()} == 3, "storage/retrieval works");
 
 #also test sql options
-$l->options(parens => 1);
 ok($l->sql() eq "USING(foo, bar, baz)", "sql with parens");
 
 #test push
-$l->list_push(qw(quux));
+$l->expr->list_push(qw(quux));
 ok($l->sql eq "USING(foo, bar, baz, quux)", "push works");
 
 #test pop
-$l->list_pop;
+$l->expr->list_pop;
 ok($l->sql eq "USING(foo, bar, baz)", "pop works");
 
 #shift
-$l->list_shift;
+$l->expr->list_shift;
 ok($l->sql eq "USING(bar, baz)", "shift works");
 
 #unshift
-$l->list_unshift("dooky");
+$l->expr->list_unshift("dooky");
 ok($l->sql eq "USING(dooky, bar, baz)", "unshift works");
+
+$l->expr("custom");
+
+is($l->sql, "USING(custom)", "custom expression");
+
+$l->expr("");
+
+is($l->sql, "", "empty expr");

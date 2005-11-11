@@ -45,7 +45,7 @@ BEGIN { use_ok('SQL::Builder::BinaryOp') };
 
 	$sel->tables->add_join(
 		table => "salaries",
-		'using->list_push' => "salary_id"
+		'using->expr->list_push' => "salary_id"
 	);
 
 	# SELECT * FROM users AS u JOIN salaries USING (salary_id)

@@ -254,7 +254,7 @@ Suppose the database supports JOINs, we can use those to:
 
 	$sel->tables->add_join(
 		table => "salaries",
-		'using->list_push' => "salary_id"
+		'using->expr->list_push' => "salary_id"
 	);
 
 	# SELECT * FROM users AS u JOIN salaries USING (salary_id)
@@ -317,7 +317,7 @@ modify:
 
 	# SELECT u.user_id, sals.salary_amount
 	# FROM users AS u
-	# JOIN salaries AS sal ON sal.salary_id = u.salary_id
+	# JOIN salaries AS sals ON sals.salary_id = u.salary_id
 
 We can also filter the results by using a WHERE clause. The following will
 return users who earn more than $20,000
@@ -332,10 +332,10 @@ return users who earn more than $20,000
 
 	# SELECT u.user_id, sals.salary_amount
 	# FROM users AS u
-	# JOIN salaries AS sal ON sal.salary_id = u.salary_id
+	# JOIN salaries AS sals ON sals.salary_id = u.salary_id
 	# WHERE u.salary_amount > 20000
 
-But that's not all, we use a "macro" to modify the query to return all users who
+But that's not all, we can use a "macro" to modify the query to return all users who
 have a salary of less than $20,000. We'll just flip all instances of ">" with
 "<":
 
@@ -355,7 +355,7 @@ have a salary of less than $20,000. We'll just flip all instances of ">" with
 
 	# SELECT u.user_id, sals.salary_amount
 	# FROM users AS u
-	# JOIN salaries AS sal ON sal.salary_id = u.salary_id
+	# JOIN salaries AS sals ON sals.salary_id = u.salary_id
 	# WHERE u.salary_amount < 20000
 
 For databases that support them, we can easily limit the amount of results also:
@@ -364,7 +364,7 @@ For databases that support them, we can easily limit the amount of results also:
 
 	# SELECT u.user_id, sals.salary_amount
 	# FROM users AS u
-	# JOIN salaries AS sal ON sal.salary_id = u.salary_id
+	# JOIN salaries AS sals ON sals.salary_id = u.salary_id
 	# WHERE u.salary_amount > 20000
 	# LIMIT 10
 
@@ -374,7 +374,7 @@ pagination is also useful:
 
 	# SELECT u.user_id, sals.salary_amount
 	# FROM users AS u
-	# JOIN salaries AS sal ON sal.salary_id = u.salary_id
+	# JOIN salaries AS sals ON sals.salary_id = u.salary_id
 	# WHERE u.salary_amount > 20000
 	# LIMIT 10 OFFSET 10
 
@@ -515,7 +515,7 @@ See SQL::Builder::Having(3) and _having()
 This is a wrapper to SQL::Builder::FromList::joins() which is called on
 tables(). This is used to add JOINs to the SELECT statement
 
-	$select->joins->list_push("JOIN salaries AS sal USING (salary_id)");
+	$select->joins->list_push("JOIN salaries AS sals USING (salary_id)");
 
 =head2 init()
 
@@ -615,3 +615,6 @@ SQL::Builder::Join(3)
 SQL::Builder::OrderBy(3)
 SQL::Builder::Order(3)
 SQL::Builder::Where(3)
+
+SQL::Builder::Update(3)
+SQL::Builder::Delete(3)

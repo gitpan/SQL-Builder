@@ -1,4 +1,4 @@
-use Test::More tests => 10;
+use Test::More tests => 16;
 use strict;
 use warnings;
 
@@ -48,4 +48,26 @@ $c->alias("bar");
 	# u.user_id
 	is($user_id->sql, "u.user_id", "full_name uses other() when it has an alias");
 
+}
+
+{
+	my $col = SQL::Builder::Column->new;
+
+	$col->references("a");
+
+	is($col->references, "a", "references() storage");
+
+	$col->references_n("one");
+
+	is($col->references_n, "one", "references_n storage");
+
+	$col->references_one("c");
+
+	is($col->references, "c", "references() storage");
+	is($col->references_n, "one", "references() storage");
+
+	$col->references_many("d");
+
+	is($col->references, "d", "references() storage");
+	is($col->references_n, "many", "references() storage");
 }

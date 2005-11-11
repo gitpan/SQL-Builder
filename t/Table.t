@@ -1,4 +1,4 @@
-use Test::More tests => 9;
+use Test::More tests => 11;
 use strict;
 use warnings;
 
@@ -32,3 +32,22 @@ is($c->alias, undef, "alias unset works");
 my $col = $c->col(name => "foo");
 is($col->sql, "schema.table.foo", "column works");
 
+
+{
+	my $table = SQL::Builder::Table->new(
+		name => "foo",
+		schema => "bar",
+		db => "baz"
+	);
+
+	is($table->sql, "baz.bar.foo", "schema(), db()");
+
+	$table->schema_elem(1);
+	$table->schema("bar");
+
+	$table->db_elem(0);
+	$table->db("baz");
+
+
+	is($table->sql, "bar.baz.foo", "schema(), db() element mod");
+}

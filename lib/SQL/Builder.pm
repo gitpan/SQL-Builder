@@ -1,13 +1,13 @@
 #!/usr/bin/perl
 package SQL::Builder;
 
-$VERSION = "0.03";
+$VERSION = "0.033";
 
 #use 5.008005;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.033';
 
 use SQL::Builder::Table;
 use SQL::Builder::Select;
@@ -68,7 +68,7 @@ SQL::Builder - a structured SQL manipulation interface
 
 =head1 VERSION
 
-Version 0.03 ALPHA - this software isn't production-ready yet and the API is
+Version 0.033 ALPHA - this software isn't production-ready yet and the API is
 likely to change. Some methods and functionality aren't documented completely
 and some documentation exists without the functionality. USE AT YOUR OWN RISK
 
@@ -421,6 +421,10 @@ Perl Artistic
 =head1 AUTHOR
 
 sili@cpan.org -- Feel free to email me with questions, suggestions, etc
+
+=head1 CREDITS
+
+Sam Vilain - bugs, tests
 
 =head1 CONTACT / GETTING INVOLVED
 

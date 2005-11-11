@@ -11,6 +11,8 @@ use Scalar::Util qw(blessed);
 use SQL::Builder::Column;
 use SQL::Builder::Base;
 
+use SQL::Builder::List;
+
 use base qw(SQL::Builder::Base);
 
 
@@ -71,7 +73,12 @@ sub init	{
 		$self->other($other);
 	}
 
+	$self->schema_elem(0);
+	$self->db_elem(1);
+
 	$self->use_as(1);
+
+	$self->columns(SQL::Builder::List->new);
 
 	return $self;
 }
@@ -86,6 +93,32 @@ sub name	{
 sub other	{
 	my $self = shift;
 	return $self->_set("other", @_)
+}
+
+sub schema_elem	{
+	return shift->options('schema_elem', @_)
+}
+
+sub schema	{
+	my $self = shift;
+
+	return $self->other->element(
+		$self->schema_elem,
+		@_
+	)
+}
+
+sub db_elem	{
+	return shift->options('db_elem', @_)
+}
+
+sub db	{
+	my $self = shift;
+
+	return $self->other->element(
+		$self->db_elem,
+		@_
+	)
 }
 
 sub alias	{
@@ -159,7 +192,10 @@ sub col	{
 		'other->list_push' => $self,
 		@_
 	)
+}
 
+sub columns	{
+	return shift->_set('column_list', @_)
 }
 
 sub children	{
@@ -301,6 +337,38 @@ in one. This list is then traversed in reverse order to generate like so:
 
 	# anything.db.schema.table
 	print $table->sql
+
+=head2 schema_elem([$idx])
+=head2 schema([$schema])
+
+schema_elem() and schema() are convenience methods which wrap calls to the
+default list maintained by other() for maintaing information about the schema to
+which the current table belongs. schema() basically does:
+
+	$self->other->element(
+		$self->schema_elem,
+		@args
+	)
+
+By default, init() populated schema_elem() with a value of 0, meaning schema()
+wraps to element 0 (the first) of the List object. See
+SQL::Builder::List::element() for its documentation.
+
+This method will die if other() does not have an element() method. These methods
+have the expected behavior: pass arguments to set the values and return the
+current object, don't pass any to retrieve current values
+
+=head2 db_elem([$idx])
+=head2 db([$db])
+
+db_elem() and db() are just like schema_elem() and schema(), except db_elem() is
+populated with a value of 1 by init(). db() and db_elem() are to be used for
+tracking information about the database to which the table belongs. It might be
+particularly useful to set db_elem() to 0 if the DBMS in use doesn't support
+schemas.
+
+If other() doesn't have an element() method, this function will die. The typical
+behavior can be expected from these methods
 
 =head2 quote([1|0])
 

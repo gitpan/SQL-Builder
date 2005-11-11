@@ -9,55 +9,21 @@ use strict;
 use SQL::Builder::Join;
 use SQL::Builder::List;
 
-use base qw(SQL::Builder::List);
+use base qw(SQL::Builder::FromList);
 
-sub init	{
-	my $self = shift;
-
-	$self->SUPER::init();
-
-	$self->options(parens => 1);
-	$self->joiner("\n");
-
-	return $self
-}
-
-# a wrapper for list()
-sub joins	{
-	return shift->list(@_)
+sub sql	{
+    my $self = shift;
+    my $sql = $self->SUPER::sql;
+    $sql =~ s{\AFROM\s+}{};
+    $sql = "($sql)";
+    if ( my $alias = $self->alias ) {
+	$sql .= " AS ".$alias;
+    }
+    return $sql;
 }
 
 sub alias	{
-	return shift->_set('join_group_alias', @_)
-}
-
-sub sql	{
-	my $self = shift;
-	my $alias = $self->dosql($self->alias);
-	my $list = $self->SUPER::sql;
-
-	my $have_alias = defined($alias) && length $alias;
-	my $have_list  = defined($list)  && length $list;
-
-	if($have_alias && $have_list)	{
-		return "$list AS $alias"
-	}
-	elsif($have_list)	{
-		return $list
-	}
-	else	{
-		return ""
-	}
-}
-
-sub add_join	{
-	my $self = shift;
-
-	my $join = SQL::Builder::Join->new(@_);
-
-	$self->list_push($join);
-
-	return $join
+	return shift->_set('table_alias', @_)
 }
 
 1;

@@ -51,9 +51,26 @@ sub sql	{
 	my $list  = $self->dosql($self->tables);
 	my $joins = $self->dosql($self->joins);
 
-	return "" unless $list;
-	
-	return $joins ? "FROM $list\n$joins" : "FROM $list"
+	my $sql = "FROM";
+
+	if(defined($list) && length($list))	{
+
+		$sql .= " $list";
+	}
+
+	if(defined($joins) && length($joins))	{
+		
+		$sql .= "\n$joins";
+	}
+
+	if($sql eq 'FROM')	{
+
+		return ""
+	}
+	else	{
+
+		return $sql
+	}
 }
 
 ########
@@ -263,7 +280,7 @@ or
 
 This returns the SQL serialization of the object. The current value of tables()
 and joins() are passed through SQL::Builder::Base::dosql(). If $joins is
-empty, "FROM $tables" is returned. If $tables is empty, "" is returned.
+empty, "FROM $tables" is returned. If $tables and $joins is empty, "" is returned.
 Basically:
 
 	[FROM $tables [$joins]]

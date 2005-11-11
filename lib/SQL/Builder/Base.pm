@@ -70,7 +70,6 @@ sub dosql	{
 	else	{
 		return $_[0]
 	}
-
 }
 
 
@@ -572,7 +571,6 @@ sub run	{
 
 	return $sth
 }
-
 
 1;
 
@@ -1273,6 +1271,12 @@ automated by inheriting SQL::Builder::Base.
 Ideally SQL::Builder will be very granular and OO - see SQL::Builder(3) for
 propaganda. It's important to keep this in mind when developing subclasses.
 
+=head1 NOTES
+
+This is a subclass of SQL::Builder::AnyObject, which defines many of the useful
+methods which are documented in this class. That will change later...
+
 =head1 SEE ALSO
 
-SQL::Builder - for propaganda
+SQL::Builder(3)
+SQL::Builder::AnyObject(3)

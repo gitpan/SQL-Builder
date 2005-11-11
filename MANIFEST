@@ -29,6 +29,10 @@ t/ColumnList.t
 t/FromList.t
 t/FromTable.t
 t/Select.t
+t/Delete.t
+t/Update.t
+t/Insert.t
+t/TableExpression.t
 lib/SQL/Builder.pm
 lib/SQL/Builder/AggregateFunction.pm
 lib/SQL/Builder/AnyObject.pm
@@ -63,5 +67,9 @@ lib/SQL/Builder/UnaryOp.pm
 lib/SQL/Builder/Union.pm
 lib/SQL/Builder/Using.pm
 lib/SQL/Builder/Where.pm
+lib/SQL/Builder/Delete.pm
+lib/SQL/Builder/Update.pm
+lib/SQL/Builder/Insert.pm
+lib/SQL/Builder/TableExpression.pm
 META.yml                                 Module meta-data (added by MakeMaker)
 BUGS
