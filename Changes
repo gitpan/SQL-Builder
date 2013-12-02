@@ -1,54 +1,6 @@
-Revision history for Perl extension SQL::Builder.
+Revision history for Perl extension SQL-Builder
 
-0.033 Thu Nov 10 23:00:07 2005
-	- Added schema(), db(), db_elem(), schema_elem(), documentation, tests
-	- Added _meta() and some docs to AnyObject.pm
-	- Modified Base.pm to refer to AnyObject.pm
-	- Added references*(), is_primary(), data_type(), has_alias() documentation update,
-	  and tests to Column.pm
-	- Added Delete.pm (DELETE) with tests and docs
-	- Modified FromList::sql() to do defined/length checks on tables() and joins()
-	  before using them. Updated docs
-	- Added an UPDATE statement (Update.pm) along with docs and tests
-	- Some temporary fixes to the modeling of JoinGroup - from Sam
-	- Minor logic fix in Function.pm arg existence checking
-	- Added INSERT statement + docs + test
-	- Added TableExpression+docs+tests
+0.01 2013-12-02T19:10:52Z
 
-0.032 Fri Nov  4 09:10:00 2005
-	- Added documentation and updated SubSelect.pm
-	- Added tests for SubSelect.pm
-
-0.031 Thu Nov  3 20:20:00 2005
-	- Fixed typos in Select.pm
-	- Added documentation to Using.pm
-	- Changed base of Using.pm to Base.pm, added a list object to expr()
-	- Modified tests for Using.pm
-	- Fixed broken tests in Select.pm from Using.pm change
-	- Modified documentation for Select.pm because of Using.pm
-	- Added some documentation to Iterator.pm
-
-0.03  Wed Nov  2 20:00:00 2005
-	- Added make_instance() factory to Base.pm
-	- Added a test for make_instance() to Function.t
-	- Removed Alias*.pm and Alias.t. Not being used and poorly done
-	- Added documentation all over
-	- Added better quoting support to Column.pm - now includes check for
-	   dbh() and falls back to quoter(), allows control of quoting mechanisms using
-	   various options. Also changed other() to use SQL::Builder::List instead of
-	   a Perl array. Added more tests
-	- Modified Base.pm macro api to include mark_parents
-	- Added placeholders
-	- Extracted part of API from Base to AnyObject
-	- Added children() method and documentation everywhere possible
-	- Added better quoting support to Table.pm
-	- Added tests for Select among otherss
-	- Added alias_sql() to Base.pm
-
-0.02  Fri Oct  7 10:20:00 2005
-	- Forgot to add Select.pm to the MANIFEST, added
-
-0.01  Fri Jun 17 19:10:41 2005
-	- original version; created by h2xs 1.23 with options
-		-AX -n SQL::Builder
+    - original version
 

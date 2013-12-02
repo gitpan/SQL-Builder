@@ -1,0 +1,97 @@
+{
+   "abstract" : "sql builder",
+   "author" : [
+      "Viacheslav Tykhanovskyi"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.7.5",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "SQL-Builder",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples",
+         "author",
+         "builder"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
+            "Module::Build" : "0.38"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion" : "0.10108",
+            "Test::Pod" : "1.41",
+            "Test::Spellunker" : "v0.2.7"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "perl" : "5.008001"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : "0.98"
+         }
+      }
+   },
+   "provides" : {
+      "SQL::Builder" : {
+         "file" : "lib/SQL/Builder.pm",
+         "version" : "0.01"
+      },
+      "SQL::Builder::Delete" : {
+         "file" : "lib/SQL/Builder/Delete.pm"
+      },
+      "SQL::Builder::Expression" : {
+         "file" : "lib/SQL/Builder/Expression.pm"
+      },
+      "SQL::Builder::Insert" : {
+         "file" : "lib/SQL/Builder/Insert.pm"
+      },
+      "SQL::Builder::Join" : {
+         "file" : "lib/SQL/Builder/Join.pm"
+      },
+      "SQL::Builder::Quoter" : {
+         "file" : "lib/SQL/Builder/Quoter.pm"
+      },
+      "SQL::Builder::Select" : {
+         "file" : "lib/SQL/Builder/Select.pm"
+      },
+      "SQL::Builder::Update" : {
+         "file" : "lib/SQL/Builder/Update.pm"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/vti/sql-builder/issues"
+      },
+      "homepage" : "https://github.com/vti/sql-builder",
+      "repository" : {
+         "url" : "git://github.com/vti/sql-builder.git",
+         "web" : "https://github.com/vti/sql-builder"
+      }
+   },
+   "version" : "0.01",
+   "x_contributors" : [
+      "vti <viacheslav.t@gmail.com>"
+   ]
+}

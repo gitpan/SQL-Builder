@@ -1,45 +1,8 @@
-package SQL::Builder;
-
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
-
-require Carp;
-use SQL::Builder::Select;
-use SQL::Builder::Insert;
-use SQL::Builder::Delete;
-use SQL::Builder::Update;
-
-$Carp::Internal{(__PACKAGE__)}++;
-$Carp::Internal{"SQL::Builder::$_"}++ for qw/
-  Select
-  Insert
-  Delete
-  Update
-  Expression
-  Join
-  Quoter
-  /;
-
-sub build {
-    my $class = shift;
-    my ($name) = shift;
-
-    my $class_name = 'SQL::Builder::' . ucfirst($name);
-    return $class_name->new(@_);
-}
-
-1;
-__END__
-
-=pod
-
-=head1 NAME
+# NAME
 
 SQL::Builder - sql builder
 
-=head1 SYNOPSIS
+# SYNOPSIS
 
     use DBI;
 
@@ -82,49 +45,49 @@ SQL::Builder - sql builder
     #   }
     # ]
 
-=head1 DESCRIPTION
+# DESCRIPTION
 
-L<SQL::Builder> is a SQL builder and rows parser in one module. It behaves very
-close to L<SQL::Abstract> or similar modules but allows deep joins and automatic
+[SQL::Builder](http://search.cpan.org/perldoc?SQL::Builder) is a SQL builder and rows parser in one module. It behaves very
+close to [SQL::Abstract](http://search.cpan.org/perldoc?SQL::Abstract) or similar modules but allows deep joins and automatic
 convertion from arrayref to a hashref, keeping the nested join structure if
 needed.
 
-This module itself is just a factory for the common SQL statements: C<SELECT>,
-C<DELETE>, C<INSERT> and C<UPDATE>.
+This module itself is just a factory for the common SQL statements: `SELECT`,
+`DELETE`, `INSERT` and `UPDATE`.
 
-=head1 METHODS
+# METHODS
 
-=head2 C<build>
+## `build`
 
 Build SQL statement.
 
     my $select = SQL::Builder->build('select, @params);
 
-=head1 SQL
+# SQL
 
-=head2 SQL expressions
+## SQL expressions
 
-SQL expressions are everything used in C<where>, C<join> and other statements.
+SQL expressions are everything used in `where`, `join` and other statements.
 So the following rules apply to all of them. For more details see
-L<SQL::Builder::Expression>.
+[SQL::Builder::Expression](http://search.cpan.org/perldoc?SQL::Builder::Expression).
 
     my $expr = SQL::Builder::Expression->new(expr => [a => 'b']);
 
     my $sql = $expr->to_sql;   # `a` = ?
     my @bind = $expr->to_bind; # ('b')
 
-=head2 SQL Joins
+## SQL Joins
 
-For more details see L<SQL::Builder::Join>.
+For more details see [SQL::Builder::Join](http://search.cpan.org/perldoc?SQL::Builder::Join).
 
     my $expr = SQL::Builder::Join->new(source => 'table', on => [a => 'b']);
 
     my $sql = $expr->to_sql;   # JOIN `table` ON `table`.`a` = ?
     my @bind = $expr->to_bind; # ('b')
 
-=head2 SQL Inserts
+## SQL Inserts
 
-For more details see L<SQL::Builder::Select>.
+For more details see [SQL::Builder::Select](http://search.cpan.org/perldoc?SQL::Builder::Select).
 
     my $expr =
       SQL::Builder::Insert->new(into => 'table', values => [foo => 'bar']);
@@ -132,9 +95,9 @@ For more details see L<SQL::Builder::Select>.
     my $sql = $expr->to_sql;   # INSERT INTO `table` (`foo`) VALUES (?)
     my @bind = $expr->to_bind; # ('bar')
 
-=head2 SQL Updates
+## SQL Updates
 
-For more details see L<SQL::Builder::Update>.
+For more details see [SQL::Builder::Update](http://search.cpan.org/perldoc?SQL::Builder::Update).
 
     my $expr =
       SQL::Builder::Update->new(table => 'table', values => [a => 'b']);
@@ -142,18 +105,18 @@ For more details see L<SQL::Builder::Update>.
     my $sql = $expr->to_sql;   # UPDATE `table` SET `a` = ?
     my @bind = $expr->to_bind; # ('b')
 
-=head2 SQL Deletes
+## SQL Deletes
 
-For more details see L<SQL::Builder::Delete>.
+For more details see [SQL::Builder::Delete](http://search.cpan.org/perldoc?SQL::Builder::Delete).
 
     my $expr = SQL::Builder::Delete->new(from => 'table');
 
     my $sql = $expr->to_sql;   # DELETE FROM `table`
     my @bind = $expr->to_bind; # ()
 
-=head2 SQL Selects
+## SQL Selects
 
-For more details see L<SQL::Builder::Select>.
+For more details see [SQL::Builder::Select](http://search.cpan.org/perldoc?SQL::Builder::Select).
 
     my $expr =
       SQL::Builder::Select->new(from => 'table', columns => ['a', 'b']);
@@ -163,14 +126,12 @@ For more details see L<SQL::Builder::Select>.
 
     my $objects = $expr->from_rows([['c', 'd']]); # [{a => 'c', b => 'd'}];
 
-=head1 AUTHOR
+# AUTHOR
 
 Viacheslav Tykhanovskyi
 
-=head1 COPYRIGHT AND LICENSE
+# COPYRIGHT AND LICENSE
 
 Copyright 2013, Viacheslav Tykhanovskyi.
 
 This module is free software, you may distribute it under the same terms as Perl.
-
-=cut

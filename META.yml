@@ -1,12 +1,54 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         SQL-Builder
-version:      0.033
-version_from: lib/SQL/Builder.pm
-installdirs:  site
+---
+abstract: 'sql builder'
+author:
+  - 'Viacheslav Tykhanovskyi'
+build_requires:
+  Test::More: 0.98
+configure_requires:
+  CPAN::Meta: 0
+  CPAN::Meta::Prereqs: 0
+  Module::Build: 0.38
+dynamic_config: 0
+generated_by: 'Minilla/v0.7.5, CPAN::Meta::Converter version 2.130880'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: SQL-Builder
+no_index:
+  directory:
+    - t
+    - xt
+    - inc
+    - share
+    - eg
+    - examples
+    - author
+    - builder
+provides:
+  SQL::Builder:
+    file: lib/SQL/Builder.pm
+    version: 0.01
+  SQL::Builder::Delete:
+    file: lib/SQL/Builder/Delete.pm
+  SQL::Builder::Expression:
+    file: lib/SQL/Builder/Expression.pm
+  SQL::Builder::Insert:
+    file: lib/SQL/Builder/Insert.pm
+  SQL::Builder::Join:
+    file: lib/SQL/Builder/Join.pm
+  SQL::Builder::Quoter:
+    file: lib/SQL/Builder/Quoter.pm
+  SQL::Builder::Select:
+    file: lib/SQL/Builder/Select.pm
+  SQL::Builder::Update:
+    file: lib/SQL/Builder/Update.pm
 requires:
-    Data::Dumper:                  2.121
-    Scalar::Util:                  1.14
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  perl: 5.008001
+resources:
+  bugtracker: https://github.com/vti/sql-builder/issues
+  homepage: https://github.com/vti/sql-builder
+  repository: git://github.com/vti/sql-builder.git
+version: 0.01
+x_contributors:
+  - 'vti <viacheslav.t@gmail.com>'
